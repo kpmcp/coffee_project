@@ -1,8 +1,7 @@
 import sys
 
 from PyQt5.QtSql import QSqlDatabase, QSqlTableModel
-from PyQt5.QtWidgets import QWidget, QTableView, QApplication
-from PyQt5 import uic
+from PyQt5.QtWidgets import QWidget, QApplication
 from addEditCoffeeForm import AddEdit_Form
 from coffeeInfoTable import CoffeeTable_Form
 
