@@ -3,12 +3,14 @@ import sys
 from PyQt5.QtSql import QSqlDatabase, QSqlTableModel
 from PyQt5.QtWidgets import QWidget, QTableView, QApplication
 from PyQt5 import uic
+from addEditCoffeeForm import AddEdit_Form
+from coffeeInfoTable import CoffeeTable_Form
 
 
-class EditCoffeeTable(QWidget):
+class EditCoffeeTable(QWidget, AddEdit_Form):
     def __init__(self, parent, model):
         super().__init__()
-        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.setupUi(self)
         self.model = model
         self.initUI()
 
@@ -27,10 +29,10 @@ class EditCoffeeTable(QWidget):
         self.model.submitAll()
 
 
-class CoffeeTable(QWidget):
+class CoffeeTable(QWidget, CoffeeTable_Form):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main.ui', self)
+        self.setupUi(self)
         self.db = QSqlDatabase.addDatabase('QSQLITE')
         self.model = QSqlTableModel(self, self.db)
         self.initUI()
