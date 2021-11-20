@@ -5,26 +5,63 @@ from PyQt5.QtWidgets import QWidget, QTableView, QApplication
 from PyQt5 import uic
 
 
+class EditCoffeeTable(QWidget):
+    def __init__(self, parent, model):
+        super().__init__()
+        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.model = model
+        self.initUI()
+
+    def initUI(self):
+        self.add_btn.clicked.connect(self.addRow)
+        self.save_btn.clicked.connect(self.save)
+
+        self.model.setEditStrategy(QSqlTableModel.OnManualSubmit)
+        self.model.select()
+        self.view.setModel(self.model)
+
+    def addRow(self):
+        self.model.insertRow(self.model.rowCount())
+
+    def save(self):
+        self.model.submitAll()
+
+
 class CoffeeTable(QWidget):
     def __init__(self):
         super().__init__()
         uic.loadUi('main.ui', self)
+        self.db = QSqlDatabase.addDatabase('QSQLITE')
+        self.model = QSqlTableModel(self, self.db)
         self.initUI()
 
     def initUI(self):
-        db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName('coffee.db')
-        db.open()
+        self.edit_btn.clicked.connect(self.edit)
 
-        model = QSqlTableModel(self, db)
-        model.setTable('Coffee_info')
-        model.select()
+        self.db.setDatabaseName('coffee.db')
+        self.db.open()
 
-        self.view.setModel(model)
+        self.model.setTable('Coffee_info')
+        self.model.select()
+
+        self.view.setModel(self.model)
+
+    def edit(self):
+        self.edit_from = EditCoffeeTable(self, self.model)
+        self.edit_from.show()
+
+    def closeEvent(self, event):
+        self.db.close()
+
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = CoffeeTable()
-    ex.show()
+    form = CoffeeTable()
+    form.show()
+    sys.excepthook = except_hook
     sys.exit(app.exec())
+
